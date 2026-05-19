@@ -1,46 +1,72 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+@plugin "tailwindcss-animate";
 @import "shadcn/tailwind.css";
-
-@config "../../tailwind.config.ts";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  /* Polices Najahy */
   --font-display: var(--font-fraunces), serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
   --font-heading: var(--font-fraunces), serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
+
+  /* Palette Najahy — Méditerranéenne ambitieuse */
+  --color-cream: #faf6ef;
+  --color-paper: #f4eddc;
+  --color-sand: #ede4d3;
+
+  --color-emerald-50: #f0f5f2;
+  --color-emerald-100: #e8f0eb;
+  --color-emerald-600: #3d7a5a;
+  --color-emerald-700: #2d5f44;
+  --color-emerald-800: #1a3a2a;
+  --color-emerald-900: #0f2a1d;
+
+  --color-gold-50: #faf3e3;
+  --color-gold-100: #f7ebd4;
+  --color-gold-400: #e0b770;
+  --color-gold-500: #d4a24c;
+  --color-gold-600: #c8902b;
+
+  --color-ink: #1a1a1a;
+  --color-muted: #6f6a60;
+
+  --color-coral: #c97064;
+  --color-coral-100: #fbe7e3;
+
+  /* shadcn tokens */
+  --color-background: var(--color-cream);
+  --color-foreground: var(--color-ink);
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted-foreground: var(--color-muted);
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
   --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,21 +74,33 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Animations */
+  --animate-fade-up: fade-up 0.8s ease-out both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 :root {
-  --background: #faf6ef;
-  --foreground: #1a1a1a;
-  --card: #f4eddc;
-  --card-foreground: #1a1a1a;
-  --popover: #faf6ef;
-  --popover-foreground: #1a1a1a;
+  --background: 43 33% 96%;
+  --foreground: 0 0% 10%;
+  --card: 38 33% 91%;
+  --card-foreground: 0 0% 10%;
+  --popover: 43 33% 96%;
+  --popover-foreground: 0 0% 10%;
   --primary: 158 44% 11%;
   --primary-foreground: 43 33% 96%;
   --secondary: 38 33% 91%;
   --secondary-foreground: 158 44% 11%;
-  --muted: 38 33% 91%;
-  --muted-foreground: 33 7% 41%;
   --accent: 40 63% 54%;
   --accent-foreground: 158 44% 11%;
   --destructive: 7 47% 59%;
@@ -97,8 +135,6 @@
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
@@ -124,16 +160,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-cream text-ink font-sans;
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
-  html {
-    @apply font-sans;
-  }
+
   h1,
   h2,
   h3,
   h4 {
-    @apply font-display;
+    font-family: var(--font-display);
   }
 }

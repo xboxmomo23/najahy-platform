@@ -1,0 +1,50 @@
+---
+description: Stack technique et conventions Najahy (EdTech BAC Algérie)
+alwaysApply: true
+---
+
+# Najahy — Stack technique
+
+## Stack imposée
+
+- **Framework** : Next.js 16 avec App Router (version installée dans le projet)
+- **React** : 19
+- **Langage** : TypeScript strict
+- **Styling** : Tailwind CSS v4 — config uniquement dans `src/app/globals.css` via `@theme inline`
+- **Composants** : shadcn/ui adapté Tailwind v4 (`@/components/ui`)
+- **State serveur** : Server Components + Server Actions par défaut
+- **State client** : hooks natifs (`useState`, `useReducer`) — pas Redux/Zustand
+- **Validation** : Zod pour toute donnée externe
+- **Database + Auth** : Supabase (PostgreSQL + RLS obligatoire)
+- **Icons** : Lucide React uniquement
+- **Animations** : Framer Motion avec parcimonie ; utilitaires CSS via `tw-animate-css`
+- **Polices** : Fraunces (display) + DM Sans (corps) via `next/font/google`
+
+## Tailwind v4 — règles
+
+- **Ne pas créer** de `tailwind.config.ts` / `.js`
+- Couleurs Najahy dans `@theme inline` de `globals.css` : `cream`, `paper`, `sand`, `emerald-*`, `gold-*`, `ink`, `coral`
+- Tokens shadcn via variables CSS `:root` (`--primary`, `--background`, etc.)
+- En cas de doute : https://tailwindcss.com/docs/upgrade-guide
+- Consulter `node_modules/next/dist/docs/` avant d'écrire du code Next.js (APIs peuvent différer du training)
+
+## Sécurité
+
+- RLS sur toutes les tables Supabase
+- Jamais de `SUPABASE_SERVICE_ROLE_KEY` côté client
+- Valider avec Zod avant insertion DB
+- Pas de SQL brut depuis le frontend
+
+## UX
+
+- Mobile-first (375px)
+- Max 3 actions par écran
+- Tutoiement élèves, ton chaleureux parents
+- Skeletons pour loading, messages d'erreur humains
+
+## Demander avant d'agir
+
+- Modification schéma DB
+- Nouvelle dépendance npm
+- Changement de stack
+- Refactor majeur
