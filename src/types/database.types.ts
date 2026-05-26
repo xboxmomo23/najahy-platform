@@ -330,6 +330,118 @@ export type Database = {
           },
         ]
       }
+      diagnostic_attempts: {
+        Row: {
+          answers: Json | null
+          completed_at: string | null
+          confidence_scores: Json | null
+          created_at: string | null
+          focus_areas: string[] | null
+          generated_plan: Json | null
+          hours_per_week: number | null
+          id: string
+          predicted_score: number | null
+          started_at: string | null
+          student_id: string
+          subject_scores: Json | null
+          target_score: number | null
+        }
+        Insert: {
+          answers?: Json | null
+          completed_at?: string | null
+          confidence_scores?: Json | null
+          created_at?: string | null
+          focus_areas?: string[] | null
+          generated_plan?: Json | null
+          hours_per_week?: number | null
+          id?: string
+          predicted_score?: number | null
+          started_at?: string | null
+          student_id: string
+          subject_scores?: Json | null
+          target_score?: number | null
+        }
+        Update: {
+          answers?: Json | null
+          completed_at?: string | null
+          confidence_scores?: Json | null
+          created_at?: string | null
+          focus_areas?: string[] | null
+          generated_plan?: Json | null
+          hours_per_week?: number | null
+          id?: string
+          predicted_score?: number | null
+          started_at?: string | null
+          student_id?: string
+          subject_scores?: Json | null
+          target_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnostic_attempts_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diagnostic_questions: {
+        Row: {
+          competency_tags: string[] | null
+          correct_answer: string
+          created_at: string | null
+          difficulty: number
+          display_order: number | null
+          explanation: string | null
+          id: string
+          options: Json
+          question: string
+          question_latex: string | null
+          related_chapter_slug: string | null
+          subject_id: string
+          type: string
+        }
+        Insert: {
+          competency_tags?: string[] | null
+          correct_answer: string
+          created_at?: string | null
+          difficulty?: number
+          display_order?: number | null
+          explanation?: string | null
+          id?: string
+          options: Json
+          question: string
+          question_latex?: string | null
+          related_chapter_slug?: string | null
+          subject_id: string
+          type?: string
+        }
+        Update: {
+          competency_tags?: string[] | null
+          correct_answer?: string
+          created_at?: string | null
+          difficulty?: number
+          display_order?: number | null
+          explanation?: string | null
+          id?: string
+          options?: Json
+          question?: string
+          question_latex?: string | null
+          related_chapter_slug?: string | null
+          subject_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnostic_questions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercises: {
         Row: {
           chapter_id: string

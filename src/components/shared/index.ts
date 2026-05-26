@@ -7,5 +7,6 @@ export {
   type LoadingSkeletonListProps,
 } from "./LoadingSkeleton";
 export { Logo, type LogoProps } from "./Logo";
+export { MathRender, type MathRenderProps } from "./MathRender";
 export { PageHeader, type PageHeaderProps } from "./PageHeader";
 export { ZelligeBackground, type ZelligeBackgroundProps } from "./ZelligeBackground";
