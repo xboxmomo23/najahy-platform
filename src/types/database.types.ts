@@ -170,6 +170,36 @@ export type Database = {
           },
         ]
       }
+      ai_response_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          hit_count: number
+          id: string
+          language: Database["public"]["Enums"]["language_pref"]
+          question_normalized: string
+          response: string
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          language: Database["public"]["Enums"]["language_pref"]
+          question_normalized: string
+          response: string
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          language?: Database["public"]["Enums"]["language_pref"]
+          question_normalized?: string
+          response?: string
+        }
+        Relationships: []
+      }
       chapters: {
         Row: {
           bac_frequency: number | null

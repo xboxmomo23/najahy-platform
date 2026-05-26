@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 
 import { EmptyState, KPICard, PageHeader } from "@/components/shared";
+import { getStudentSubscriptionPlan } from "@/app/(app)/bibliotheque/actions";
 import { getDaysUntilBac } from "@/components/features/diagnostic/diagnostic-results-helpers";
 import {
   getStudentDashboardData,
@@ -17,6 +18,35 @@ import {
   type DashboardRecommendedChapter,
 } from "@/lib/auth/get-student-dashboard";
 import { cn } from "@/lib/utils";
+
+function TutorQuickAccessCard({ isFreePlan }: { isFreePlan: boolean }) {
+  return (
+    <article className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-cream to-paper p-5 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-6">
+      <div className="flex gap-4">
+        <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-emerald-800 text-gold-400">
+          <Sparkles className="size-6" aria-hidden />
+        </div>
+        <div>
+          <h2 className="font-display text-lg font-semibold text-emerald-900 sm:text-xl">
+            Une question ? Ton tuteur IA est dispo 24/7
+          </h2>
+          <p className="mt-1 text-sm leading-relaxed text-muted">
+            {isFreePlan
+              ? "3 questions gratuites par jour — pose ta question, je te guide pas à pas."
+              : "Pose ta question à tout moment, je te guide pas à pas jusqu'au BAC."}
+          </p>
+        </div>
+      </div>
+      <Link
+        href="/app/tuteur-ia"
+        className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 px-5 text-sm font-semibold text-cream transition-colors hover:bg-emerald-900 sm:mt-0 sm:w-auto"
+      >
+        Ouvrir le tuteur IA
+        <ArrowRight className="size-4" aria-hidden />
+      </Link>
+    </article>
+  );
+}
 
 function DashboardSection({
   title,
@@ -354,8 +384,12 @@ function PostDiagnosticDashboard({
 
 /** Dashboard élève — URL /dashboard */
 export default async function StudentDashboardPage() {
-  const data = await getStudentDashboardData();
+  const [data, subscriptionPlan] = await Promise.all([
+    getStudentDashboardData(),
+    getStudentSubscriptionPlan(),
+  ]);
   const daysUntilBac = getDaysUntilBac();
+  const isFreePlan = subscriptionPlan === "free";
 
   const predictedScore =
     data.diagnosticResults?.predictedScore ??
@@ -391,6 +425,10 @@ export default async function StudentDashboardPage() {
           ) : null
         }
       />
+
+      <div className="mt-6">
+        <TutorQuickAccessCard isFreePlan={isFreePlan} />
+      </div>
 
       <div className="mt-8">
         {data.diagnosticCompleted ? (

@@ -1,3 +1,1 @@
-import { createPlaceholderPage } from "@/lib/auth/placeholder-page";
-
-export default createPlaceholderPage("Tuteur IA");
+export { default } from "@/app/(app)/tuteur-ia/page";
