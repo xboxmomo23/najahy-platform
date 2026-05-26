@@ -1,3 +1,1 @@
-import { createPlaceholderPage } from "@/lib/auth/placeholder-page";
-
-export default createPlaceholderPage("Bibliothèque");
+export { default } from "@/app/(app)/bibliotheque/page";

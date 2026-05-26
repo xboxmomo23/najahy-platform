@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   BarChart3,
   BookOpen,
   CalendarDays,
@@ -8,9 +9,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { KPICard, PageHeader } from "@/components/shared";
+import { EmptyState, KPICard, PageHeader } from "@/components/shared";
 import { getDaysUntilBac } from "@/components/features/diagnostic/diagnostic-results-helpers";
-import { getStudentDashboardData } from "@/lib/auth/get-student-dashboard";
+import {
+  getStudentDashboardData,
+  type DashboardChapterResume,
+  type DashboardRecommendedChapter,
+} from "@/lib/auth/get-student-dashboard";
 import { cn } from "@/lib/utils";
 
 function DashboardSection({
@@ -39,7 +44,74 @@ function DashboardSection({
   );
 }
 
-function PreDiagnosticDashboard({ firstName }: { firstName: string }) {
+function InProgressChapterCard({ chapter }: { chapter: DashboardChapterResume }) {
+  return (
+    <article className="rounded-2xl border border-sand bg-cream p-5 transition-colors hover:border-emerald-300 hover:bg-paper">
+      <p className="text-xs font-medium uppercase tracking-wider text-muted">
+        {chapter.subjectName}
+      </p>
+      <h3 className="mt-1 font-display text-lg font-semibold text-emerald-900">
+        {chapter.title}
+      </h3>
+      <div className="mt-4">
+        <div className="mb-1.5 flex justify-between text-xs text-muted">
+          <span>Progression</span>
+          <span>{chapter.progressPercentage}%</span>
+        </div>
+        <div className="h-2 overflow-hidden rounded-full bg-sand">
+          <div
+            className="h-full rounded-full bg-gold-500 transition-all"
+            style={{ width: `${chapter.progressPercentage}%` }}
+          />
+        </div>
+      </div>
+      <Link
+        href={`/app/chapitre/${chapter.slug}`}
+        className="mt-5 inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 text-sm font-medium text-cream transition-colors hover:bg-emerald-900 sm:w-auto sm:px-5"
+      >
+        Continuer
+        <ArrowRight className="size-4" aria-hidden />
+      </Link>
+    </article>
+  );
+}
+
+function RecommendedChapterCard({
+  chapter,
+}: {
+  chapter: DashboardRecommendedChapter;
+}) {
+  return (
+    <Link
+      href={`/app/chapitre/${chapter.chapterSlug}`}
+      className="block rounded-2xl border border-emerald-200 bg-emerald-100/50 p-5 transition-colors hover:border-emerald-400 hover:bg-emerald-100"
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800">
+        {chapter.subjectName}
+      </p>
+      <h3 className="mt-1 font-display text-lg font-semibold text-emerald-900">
+        {chapter.chapterTitle}
+      </h3>
+      <p className="mt-2 text-sm text-muted">
+        Gain potentiel :{" "}
+        <span className="font-semibold text-gold-600">
+          +{chapter.potentialGain.toFixed(1)} pts
+        </span>{" "}
+        sur ta note prédictive
+      </p>
+    </Link>
+  );
+}
+
+function PreDiagnosticDashboard({
+  firstName,
+  inProgressChapters,
+  recommendedChapters,
+}: {
+  firstName: string;
+  inProgressChapters: DashboardChapterResume[];
+  recommendedChapters: DashboardRecommendedChapter[];
+}) {
   return (
     <div className="space-y-8">
       <div className="rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-100/60 px-6 py-8 text-center sm:px-10 sm:py-10">
@@ -58,31 +130,21 @@ function PreDiagnosticDashboard({ firstName }: { firstName: string }) {
           className={cn(
             "mt-8 inline-flex h-11 items-center justify-center rounded-lg px-6 text-sm font-semibold transition-colors",
             "bg-emerald-800 text-cream hover:bg-emerald-900",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-800 focus-visible:ring-offset-2",
           )}
         >
           Commencer mon diagnostic
         </Link>
       </div>
 
-      <div className="rounded-2xl border border-sand bg-paper px-6 py-6 sm:px-8">
-        <p className="text-xs font-medium uppercase tracking-wider text-gold-600">
-          En attendant
-        </p>
-        <h2 className="mt-2 font-display text-xl font-semibold text-emerald-900">
-          Bonjour {firstName},
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted">
-          Explore la bibliothèque de cours pendant que ton plan se prépare.
-        </p>
-        <Link
-          href="/app/bibliotheque"
-          className="mt-5 inline-flex h-10 items-center gap-2 rounded-lg border border-sand bg-cream px-4 text-sm font-medium text-emerald-900 transition-colors hover:border-emerald-800/30 hover:bg-paper"
-        >
-          <BookOpen className="size-4" aria-hidden />
-          Accéder à la bibliothèque
-        </Link>
-      </div>
+      {inProgressChapters.length > 0 ? (
+        <DashboardSection title="Reprends où tu en étais">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {inProgressChapters.map((chapter) => (
+              <InProgressChapterCard key={chapter.id} chapter={chapter} />
+            ))}
+          </div>
+        </DashboardSection>
+      ) : null}
     </div>
   );
 }
@@ -92,13 +154,22 @@ function PostDiagnosticDashboard({
   targetScore,
   gap,
   daysUntilBac,
+  inProgressChapters,
+  competencyValidated,
+  competencyTotal,
+  recommendedChapters,
   firstStep,
 }: {
   predictedScore: number | null;
   targetScore: number | null;
   gap: number | null;
   daysUntilBac: number;
+  inProgressChapters: DashboardChapterResume[];
+  competencyValidated: number;
+  competencyTotal: number;
+  recommendedChapters: DashboardRecommendedChapter[];
   firstStep: {
+    chapterSlug: string;
     chapterTitle: string;
     reason: string;
   } | null;
@@ -111,6 +182,28 @@ function PostDiagnosticDashboard({
         : targetScore !== null
           ? `Objectif ${targetScore}/20`
           : undefined;
+
+  const hasAnyProgress =
+    inProgressChapters.length > 0 ||
+    competencyValidated > 0 ||
+    recommendedChapters.length > 0;
+
+  const firstRecommended =
+    recommendedChapters[0] ??
+    (firstStep
+      ? {
+          chapterSlug: firstStep.chapterSlug,
+          chapterTitle: firstStep.chapterTitle,
+          subjectSlug: "",
+          subjectName: "Priorité diagnostic",
+          potentialGain: 0,
+        }
+      : null);
+
+  const competencyDelta =
+    competencyTotal > 0
+      ? `${competencyValidated} validée${competencyValidated > 1 ? "s" : ""} sur ${competencyTotal}`
+      : "Aucune compétence configurée";
 
   return (
     <div className="space-y-10">
@@ -138,9 +231,24 @@ function PostDiagnosticDashboard({
         />
         <KPICard
           label="Compétences"
-          value="Bientôt"
-          delta="Suivi détaillé — Verticale 3"
-          deltaTone="neutral"
+          value={
+            competencyTotal > 0 ? (
+              <>
+                {competencyValidated}
+                <span className="text-lg font-normal text-emerald-200/80">
+                  /{competencyTotal}
+                </span>
+              </>
+            ) : (
+              "—"
+            )
+          }
+          delta={competencyDelta}
+          deltaTone={
+            competencyTotal > 0 && competencyValidated / competencyTotal >= 0.5
+              ? "positive"
+              : "neutral"
+          }
           icon={<BarChart3 />}
           className="sm:col-span-2 lg:col-span-1"
         />
@@ -148,24 +256,78 @@ function PostDiagnosticDashboard({
 
       <DashboardSection
         title="Reprends où tu en étais"
-        description="Tes derniers chapitres et exercices apparaîtront ici."
+        description="Tes chapitres en cours, là où tu t'es arrêté."
       >
-        <div className="rounded-xl border border-dashed border-sand bg-paper/80 px-5 py-8 text-center">
-          <ClipboardList
-            className="mx-auto size-8 text-muted/60"
-            aria-hidden
+        {inProgressChapters.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {inProgressChapters.map((chapter) => (
+              <InProgressChapterCard key={chapter.id} chapter={chapter} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={<ClipboardList />}
+            title="Aucun chapitre en cours"
+            description={
+              hasAnyProgress
+                ? "Choisis un chapitre recommandé ci-dessous ou explore la bibliothèque pour commencer."
+                : "Explore la bibliothèque et lance ton premier chapitre — ta progression apparaîtra ici."
+            }
           />
-          <p className="mt-3 text-sm font-medium text-emerald-900">
-            Reprise de session — bientôt disponible
-          </p>
-          <p className="mt-1 text-sm text-muted">
-            Dès que les chapitres seront en ligne, tu retrouveras ici ton
-            dernier point d&apos;arrêt.
-          </p>
-        </div>
+        )}
+        {inProgressChapters.length === 0 ? (
+          <div className="flex flex-wrap gap-3">
+            {firstRecommended ? (
+              <Link
+                href={`/app/chapitre/${firstRecommended.chapterSlug}`}
+                className="inline-flex h-10 items-center justify-center rounded-lg bg-emerald-800 px-4 text-sm font-medium text-cream hover:bg-emerald-900"
+              >
+                {firstRecommended.chapterTitle}
+              </Link>
+            ) : null}
+            <Link
+              href="/app/bibliotheque"
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-sand bg-cream px-4 text-sm font-medium text-emerald-900 hover:bg-paper"
+            >
+              <BookOpen className="mr-2 size-4" aria-hidden />
+              Bibliothèque
+            </Link>
+          </div>
+        ) : null}
       </DashboardSection>
 
-      {firstStep ? (
+      <DashboardSection
+        title="Recommandé pour toi"
+        description="Priorités de ton diagnostic — chapitres pas encore validés."
+      >
+        {recommendedChapters.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {recommendedChapters.map((chapter) => (
+              <RecommendedChapterCard
+                key={`${chapter.subjectSlug}-${chapter.chapterSlug}`}
+                chapter={chapter}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={<Sparkles />}
+            title="Toutes tes priorités sont validées"
+            description="Bravo ! Enchaîne avec la bibliothèque ou refais le diagnostic si tu as progressé."
+          />
+        )}
+        {recommendedChapters.length === 0 ? (
+          <Link
+            href="/app/bibliotheque"
+            className="inline-flex h-10 items-center justify-center rounded-lg border border-sand bg-cream px-4 text-sm font-medium text-emerald-900 hover:bg-paper"
+          >
+            Explorer tous les chapitres
+          </Link>
+        ) : null}
+      </DashboardSection>
+
+      {firstStep &&
+      !recommendedChapters.some((c) => c.chapterSlug === firstStep.chapterSlug) ? (
         <DashboardSection title="Ton premier pas recommandé">
           <div className="rounded-2xl bg-emerald-900 px-6 py-7 text-cream sm:px-8">
             <p className="text-xs font-semibold uppercase tracking-widest text-gold-400">
@@ -177,20 +339,12 @@ function PostDiagnosticDashboard({
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-emerald-100 sm:text-base">
               {firstStep.reason}
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/app/bibliotheque"
-                className="inline-flex h-10 items-center justify-center rounded-lg bg-gold-500 px-5 text-sm font-semibold text-emerald-900 transition-colors hover:bg-gold-400"
-              >
-                Commencer ce chapitre
-              </Link>
-              <Link
-                href="/app/plan"
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-emerald-600 px-5 text-sm font-medium text-cream transition-colors hover:bg-emerald-800"
-              >
-                Voir mon plan
-              </Link>
-            </div>
+            <Link
+              href={`/app/chapitre/${firstStep.chapterSlug}`}
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-gold-500 px-5 text-sm font-semibold text-emerald-900 transition-colors hover:bg-gold-400"
+            >
+              Commencer ce chapitre
+            </Link>
           </div>
         </DashboardSection>
       ) : null}
@@ -212,6 +366,8 @@ export default async function StudentDashboardPage() {
     data.diagnosticResults?.targetScore ?? data.targetScore ?? null;
 
   const gap = data.diagnosticResults?.gap ?? null;
+
+  const firstStep = data.diagnosticResults?.firstStep ?? null;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -243,10 +399,18 @@ export default async function StudentDashboardPage() {
             targetScore={targetScore}
             gap={gap}
             daysUntilBac={daysUntilBac}
-            firstStep={data.diagnosticResults?.firstStep ?? null}
+            inProgressChapters={data.inProgressChapters}
+            competencyValidated={data.competencyValidated}
+            competencyTotal={data.competencyTotal}
+            recommendedChapters={data.recommendedChapters}
+            firstStep={firstStep}
           />
         ) : (
-          <PreDiagnosticDashboard firstName={data.firstName} />
+          <PreDiagnosticDashboard
+            firstName={data.firstName}
+            inProgressChapters={data.inProgressChapters}
+            recommendedChapters={data.recommendedChapters}
+          />
         )}
       </div>
     </div>
