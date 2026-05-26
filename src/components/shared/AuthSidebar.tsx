@@ -1,10 +1,19 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
+import { logout } from "@/app/(app)/actions/logout";
 import { Avatar, Badge, Logo } from "@/components/shared";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 export type AuthNavLink = {
@@ -27,6 +36,66 @@ export interface AuthSidebarProps {
   user: AuthSidebarUser;
   userFooter?: ReactNode;
   className?: string;
+}
+
+function LogoutForm({ className }: { className?: string }) {
+  return (
+    <form action={logout} className={className}>
+      <button
+        type="submit"
+        className={cn(
+          "flex w-full items-center justify-center gap-2 rounded-lg border border-sand bg-cream px-3 py-2.5 text-sm font-medium text-muted transition-colors",
+          "hover:border-coral/30 hover:bg-coral-100/50 hover:text-coral",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-800 focus-visible:ring-offset-2 focus-visible:ring-offset-cream",
+        )}
+      >
+        <LogOut className="size-4 shrink-0" aria-hidden />
+        Déconnexion
+      </button>
+    </form>
+  );
+}
+
+function MobileUserDrawer({ user }: { user: AuthSidebarUser }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
+        className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-800 focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+        aria-label="Ouvrir le menu compte"
+      >
+        <Avatar name={user.name} imageUrl={user.avatar} size="sm" />
+      </DialogTrigger>
+      <DialogContent
+        showCloseButton
+        className={cn(
+          "top-auto bottom-0 left-0 max-w-none w-full max-h-[85vh] translate-x-0 translate-y-0 rounded-b-none rounded-t-2xl border-b-0 p-0 sm:max-w-none",
+          "data-open:slide-in-from-bottom-4 data-closed:slide-out-to-bottom-4",
+        )}
+      >
+        <DialogHeader className="border-b border-sand px-4 pt-4 pb-3 text-left">
+          <DialogTitle className="font-display text-lg text-emerald-900">
+            Mon compte
+          </DialogTitle>
+        </DialogHeader>
+        <div className="px-4 py-4">
+          <div className="flex items-center gap-3 rounded-xl bg-paper p-3">
+            <Avatar name={user.name} imageUrl={user.avatar} size="md" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-ink">{user.name}</p>
+              {user.secondaryLabel ? (
+                <p className="truncate text-xs text-muted">{user.secondaryLabel}</p>
+              ) : null}
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-sand px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <LogoutForm />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 function NavItem({
@@ -120,7 +189,7 @@ export function AuthSidebar({
         ))}
       </nav>
 
-      <div className="border-t border-sand p-4">
+      <div className="space-y-3 border-t border-sand p-4">
         <div className="flex items-center gap-3 rounded-xl bg-paper p-3">
           <Avatar name={user.name} imageUrl={user.avatar} size="md" />
           <div className="min-w-0 flex-1">
@@ -138,6 +207,7 @@ export function AuthSidebar({
             {userFooter}
           </div>
         </div>
+        <LogoutForm />
       </div>
     </aside>
   );
@@ -165,7 +235,7 @@ export function AuthLayoutShell({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex items-center justify-between border-b border-sand bg-cream/95 px-4 py-3 backdrop-blur-sm lg:hidden">
           <Logo href="/" size="sm" />
-          <Avatar name={user.name} imageUrl={user.avatar} size="sm" />
+          <MobileUserDrawer user={user} />
         </header>
 
         <main className="flex-1 pb-20 lg:pb-0">{children}</main>

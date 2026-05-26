@@ -29,7 +29,7 @@ function isProtectedPath(pathname: string): boolean {
 }
 
 function isAuthPath(pathname: string): boolean {
-  return pathname === "/connexion" || pathname === "/inscription";
+  return pathname === "/connexion" || pathname.startsWith("/inscription");
 }
 
 function getZone(pathname: string): "app" | "parent" | "prof" | "admin" | null {
@@ -80,10 +80,6 @@ function redirectWrongZone(
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-
-  if (pathname === "/dashboard") {
-    return redirectTo(request, "/dashboard");
-  }
 
   const protectedPath = isProtectedPath(pathname);
   const authPath = isAuthPath(pathname);
@@ -141,6 +137,10 @@ export async function middleware(request: NextRequest) {
 
   if (authPath) {
     if (role) {
+      // Inscription accessible même connecté (ex. compte admin de dev) — signup déconnecte avant création
+      if (pathname.startsWith("/inscription")) {
+        return response;
+      }
       return redirectTo(request, DASHBOARD_BY_ROLE[role]);
     }
     return response;
@@ -174,6 +174,7 @@ export const config = {
     "/admin/:path*",
     "/connexion",
     "/inscription",
+    "/inscription/:path*",
     "/dashboard",
     "/dashboard/:path*",
   ],

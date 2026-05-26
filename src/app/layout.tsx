@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Fraunces, DM_Sans } from "next/font/google";
+
+import { Toaster } from "@/components/ui/sonner";
+
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -28,8 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${fraunces.variable} ${dmSans.variable}`}>
-      <body className="bg-cream text-ink font-sans antialiased">
+      <body className="bg-cream font-sans text-ink antialiased">
         {children}
+        <Toaster closeButton />
       </body>
     </html>
   );
