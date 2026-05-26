@@ -166,6 +166,10 @@ function stripSensitiveContent(
 export async function getChapterDetail(
   slug: string,
 ): Promise<ChapterDetailResult> {
+  if (!slug?.trim() || slug === "undefined") {
+    notFound();
+  }
+
   const { supabase, studentId } = await requireStudent();
 
   const { data: row, error: chapterError } = await supabase
@@ -184,6 +188,7 @@ export async function getChapterDetail(
       bac_frequency,
       estimated_duration_minutes,
       unit_price_dzd,
+      subject_id,
       subjects (
         name,
         slug,
